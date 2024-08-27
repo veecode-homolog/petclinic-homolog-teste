@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-example-devportal-petclinic
+  namespace: vkpr
+  labels:
+    backstage.io/kubernetes-id: app-example-devportal-petclinic
+spec:
+  selector:
+    app: app-example-devportal-petclinic
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    meta.helm.sh/release-namespace: vkpr
+  labels:
+    backstage.io/kubernetes-id: app-example-devportal-petclinic
+  name: app-example-devportal-petclinic
+  namespace: vkpr
+spec:
+  ingressClassName: kong
+  rules:
+  - host: petclinic.homolog-minimal-otlp.vkpr.platform.vee.codes
+    http:
+      paths:
+      - backend:
+          service:
+            name: app-example-devportal-petclinic
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-example-devportal-petclinic
+  labels:
+    backstage.io/kubernetes-id: app-example-devportal-petclinic
+spec:
+  selector:
+    matchLabels:
+      app: app-example-devportal-petclinic
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app-example-devportal-petclinic
+        backstage.io/kubernetes-id: app-example-devportal-petclinic
+      annotations:
+        sidecar.opentelemetry.io/inject: "true"
+        instrumentation.opentelemetry.io/inject-java: "true"
+    spec:
+      containers:
+      - name: app
+        image: ghcr.io/pavolloffay/spring-petclinic:latest

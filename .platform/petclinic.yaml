@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: app-petclinic-homolog-teste-petclinic
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: veecode-homolog/petclinic-homolog-teste
+    grafana/dashboard-selector: "app-petclinic-homolog-teste-petclinic"
+    grafana/alert-label-selector: "alertname=app-petclinic-homolog-teste-petclinic"
+    kong-manager/service-name: vkpr.app-exemple-devportal-petclinic-service-0.8081                    
+    kong-manager/instance: /kong-manager/api
+spec:
+  type: service
+  lifecycle: experimental
+  owner: admin
